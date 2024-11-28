@@ -3,8 +3,8 @@
 from pathlib import Path
 import sys
 
-from scanner import Scanner
-from errors import had_error, reset_error
+from lox.scanner import Scanner
+from lox.errors import had_error, reset_error
 
 
 def run(source: str):

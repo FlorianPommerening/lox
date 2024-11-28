@@ -1,4 +1,4 @@
-from tokentype import TokenType
+from lox.tokentype import TokenType
 
 class Token():
     def __init__(self, tokentype: TokenType, lexeme: str, literal: object, line: int):

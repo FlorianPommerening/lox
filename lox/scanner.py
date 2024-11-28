@@ -1,6 +1,6 @@
-from errors import error
-from tokentype import TokenType
-from token import Token
+from lox.errors import error
+from lox.tokentype import TokenType
+from lox.token import Token
 
 KEYWORDS = {
     "and":    TokenType.AND,
@@ -40,57 +40,59 @@ class Scanner():
 
 
     def _scan_token(self):
-        c = self._advance()
-        if c == '(': self._add_token(TokenType.LEFT_PAREN)
-        elif c == '(': self._add_token(TokenType.LEFT_PAREN)
-        elif c == ')': self._add_token(TokenType.RIGHT_PAREN)
-        elif c == '{': self._add_token(TokenType.LEFT_BRACE)
-        elif c == '}': self._add_token(TokenType.RIGHT_BRACE)
-        elif c == ',': self._add_token(TokenType.COMMA)
-        elif c == '.': self._add_token(TokenType.DOT)
-        elif c == '-': self._add_token(TokenType.MINUS)
-        elif c == '+': self._add_token(TokenType.PLUS)
-        elif c == ';': self._add_token(TokenType.SEMICOLON)
-        elif c == '*': self._add_token(TokenType.STAR)
-        elif c == '!':
-            if self._match('='):
-                self._add_token(TokenType.BANG_EQUAL)
-            else:
-                self._add_token(TokenType.BANG)
-        elif c == '=':
-            if self._match('='):
-                self._add_token(TokenType.EQUAL_EQUAL)
-            else:
-                self._add_token(TokenType.EQUAL)
-        elif c == '<':
-            if self._match('='):
-                self._add_token(TokenType.LESS_EQUAL)
-            else:
-                self._add_token(TokenType.LESS)
-        elif c == '>':
-            if self._match('='):
-                self._add_token(TokenType.GREATER_EQUAL)
-            else:
-                self._add_token(TokenType.GREATER)
-        elif c == '/':
-            if self._match('/'):
-                # A comment goes until the end of the line.
-                while self._peek() != '\n' and not self._is_at_end():
-                    self._advance()
-            else:
-                self._add_token(TokenType.SLASH)
-        elif c == ' ' or c == '\r' or c == '\t':
-            # Ignore whitespace.
-            pass
-        elif c == '\n':
-            self._line += 1
-        elif c == '"': self._string()
-        elif is_digit(c):
-            self._number()
-        elif is_alpha(c):
-            self._identifier()
-        else:
-            error(self._line, f"unexpected character '{c}'.")
+        match c := self._advance():
+            case '(': self._add_token(TokenType.LEFT_PAREN)
+            case '(': self._add_token(TokenType.LEFT_PAREN)
+            case ')': self._add_token(TokenType.RIGHT_PAREN)
+            case '{': self._add_token(TokenType.LEFT_BRACE)
+            case '}': self._add_token(TokenType.RIGHT_BRACE)
+            case ',': self._add_token(TokenType.COMMA)
+            case '.': self._add_token(TokenType.DOT)
+            case '-': self._add_token(TokenType.MINUS)
+            case '+': self._add_token(TokenType.PLUS)
+            case ';': self._add_token(TokenType.SEMICOLON)
+            case '*': self._add_token(TokenType.STAR)
+            case '!':
+                if self._match('='):
+                    self._add_token(TokenType.BANG_EQUAL)
+                else:
+                    self._add_token(TokenType.BANG)
+            case '=':
+                if self._match('='):
+                    self._add_token(TokenType.EQUAL_EQUAL)
+                else:
+                    self._add_token(TokenType.EQUAL)
+            case '<':
+                if self._match('='):
+                    self._add_token(TokenType.LESS_EQUAL)
+                else:
+                    self._add_token(TokenType.LESS)
+            case '>':
+                if self._match('='):
+                    self._add_token(TokenType.GREATER_EQUAL)
+                else:
+                    self._add_token(TokenType.GREATER)
+            case '/':
+                if self._match('/'):
+                    # A comment goes until the end of the line.
+                    while self._peek() != '\n' and not self._is_at_end():
+                        self._advance()
+                else:
+                    self._add_token(TokenType.SLASH)
+            case ' ' | '\r' | '\t':
+                # Ignore whitespace.
+                pass
+            case '\n':
+                self._line += 1
+            case '"':
+                self._string()
+            case _:
+                if is_digit(c):
+                    self._number()
+                elif is_alpha(c):
+                    self._identifier()
+                else:
+                    error(self._line, f"unexpected character '{c}'.")
 
 
     def _advance(self):
